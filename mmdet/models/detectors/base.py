@@ -25,6 +25,12 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
         """bool: whether the detector has a neck"""
         return hasattr(self, 'neck') and self.neck is not None
 
+    @property
+    def with_mask_feat_head(self):
+        """bool: wether the detector has a mask feat head"""
+        return hasattr(self, 'mask_feat_head') and \
+               self.mask_feat_head is not None
+
     # TODO: these properties need to be carefully handled
     # for both single stage & two stage detectors
     @property
@@ -166,7 +172,7 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
             assert 'proposals' not in kwargs
             return self.aug_test(imgs, img_metas, **kwargs)
 
-    @auto_fp16(apply_to=('img', ))
+    @auto_fp16(apply_to=('img',))
     def forward(self, img, img_metas, return_loss=True, **kwargs):
         """Calls either :func:`forward_train` or :func:`forward_test` depending
         on whether ``return_loss`` is ``True``.
